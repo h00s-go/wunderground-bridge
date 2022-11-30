@@ -7,7 +7,7 @@ import (
 )
 
 func handleUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("Received request at %v\n: %v", time.Now(), r.URL.Path)
+	fmt.Printf("[%v]: %v\n", time.Now().Local(), r.URL.RawQuery)
 	url := fmt.Sprintf("http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?%v", r.URL.RawQuery)
 	_, err := http.Get(url)
 	if err != nil {
