@@ -8,15 +8,21 @@ import (
 
 	"github.com/h00s-go/wunderground-bridge/application"
 	"github.com/h00s-go/wunderground-bridge/config"
+	"github.com/h00s-go/wunderground-bridge/mqtt"
 )
 
 func main() {
-	cfg, err := config.NewConfig(false)
+	cfg, err := config.NewConfig("config.toml")
 	if err != nil {
 		log.Fatal(err)
 	}
+
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	app := application.NewApplication(cfg, logger)
+
+	mqtt := mqtt.NewMQTT(&cfg.MQTT)
+	defer mqtt.Close()
+
+	app := application.NewApplication(cfg, logger, mqtt)
 
 	fmt.Println("Listening on :8080")
 	http.ListenAndServe(":8080", app.NewRouter())

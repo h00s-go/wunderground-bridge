@@ -7,8 +7,8 @@ import (
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	app.logger.Println(r.URL.RawQuery)
 	weather, err := NewWeather(r.URL.RawQuery)
-	if err != nil {
-		app.logger.Println(weather)
+	if err == nil {
+		go app.publishWeatherToMQTT(weather)
 	} else {
 		app.logger.Println("Error parsing weather: ", err)
 	}
