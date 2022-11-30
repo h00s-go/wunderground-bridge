@@ -1,8 +1,6 @@
 package config
 
 import (
-	"fmt"
-
 	"github.com/BurntSushi/toml"
 )
 
@@ -31,7 +29,6 @@ func NewConfig(path string) (*Config, error) {
 	if _, err := toml.DecodeFile(path, c); err != nil {
 		return c, err
 	}
-	fmt.Println(c)
 
 	return c, nil
 }
