@@ -6,6 +6,12 @@ import (
 
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	app.logger.Println(r.URL.RawQuery)
+	weather, err := NewWeather(r.URL.RawQuery)
+	if err != nil {
+		app.logger.Println(weather)
+	} else {
+		app.logger.Println("Error parsing weather: ", err)
+	}
 	w.WriteHeader(http.StatusOK)
 	go app.updateWunderground(r.URL.RawQuery)
 }
