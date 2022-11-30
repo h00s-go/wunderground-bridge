@@ -2,28 +2,22 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
-	"time"
+	"os"
+
+	"github.com/h00s-go/wunderground-bridge/application"
+	"github.com/h00s-go/wunderground-bridge/config"
 )
 
-func handleUpdate(w http.ResponseWriter, r *http.Request) {
-	fmt.Printf("[%v]: %v\n", time.Now().Local(), r.URL.RawQuery)
-	url := fmt.Sprintf("http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php?%v", r.URL.RawQuery)
-	_, err := http.Get(url)
-	if err != nil {
-		fmt.Printf("Error: %v", err)
-	}
-	w.WriteHeader(http.StatusOK)
-	//w.Write([]byte(url))
-}
-
 func main() {
-	mux := http.NewServeMux()
-	mux.HandleFunc("/weatherstation/updateweatherstation.php", handleUpdate)
-	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
-	})
+	cfg, err := config.NewConfig(true)
+	if err != nil {
+		log.Fatal(err)
+	}
+	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
+	app := application.NewApplication(cfg, logger)
 
 	fmt.Println("Listening on :8080")
-	http.ListenAndServe(":8080", mux)
+	http.ListenAndServe(":8080", app.NewRouter())
 }
