@@ -14,12 +14,15 @@ func handleUpdate(w http.ResponseWriter, r *http.Request) {
 		fmt.Printf("Error: %v", err)
 	}
 	w.WriteHeader(http.StatusOK)
-	w.Write([]byte(url))
+	//w.Write([]byte(url))
 }
 
 func main() {
 	mux := http.NewServeMux()
 	mux.HandleFunc("/weatherstation/updateweatherstation.php", handleUpdate)
+	mux.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
+		w.WriteHeader(http.StatusOK)
+	})
 
 	fmt.Println("Listening on :8080")
 	http.ListenAndServe(":8080", mux)
