@@ -18,9 +18,9 @@ type Weather struct {
 	RainInWeekly      float64 `json:"weeklyrainin"`
 	RainInMonthly     float64 `json:"monthlyrainin"`
 	RainInYearly      float64 `json:"yearlyrainin"`
-	SolarRadiation    float64 `json:"solarradiastion"`
+	SolarRadiation    float64 `json:"solarradiation"`
 	UV                int     `json:"uv"`
-	IndoorTemperature float64 `json:"indoortemp"`
+	IndoorTemperature float64 `json:"indoortemperature"`
 	IndoorHumidity    int     `json:"indoorhumidity"`
 	Pressure          float64 `json:"pressure"`
 }
