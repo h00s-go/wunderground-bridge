@@ -39,11 +39,11 @@ func NewWeather(data string) (*Weather, error) {
 		WindDirection:     toInt(d.Get("winddir")),
 		WindSpeed:         mphToKph(toFloat(d.Get("windspeedmph"))),
 		WindGust:          mphToKph(toFloat(d.Get("windgustmph"))),
-		RainIn:            toFloat(d.Get("rainin")),
-		RainInDaily:       toFloat(d.Get("dailyrainin")),
-		RainInWeekly:      toFloat(d.Get("weeklyrainin")),
-		RainInMonthly:     toFloat(d.Get("monthlyrainin")),
-		RainInYearly:      toFloat(d.Get("yearlyrainin")),
+		RainIn:            inchToMm(toFloat(d.Get("rainin"))),
+		RainInDaily:       inchToMm(toFloat(d.Get("dailyrainin"))),
+		RainInWeekly:      inchToMm(toFloat(d.Get("weeklyrainin"))),
+		RainInMonthly:     inchToMm(toFloat(d.Get("monthlyrainin"))),
+		RainInYearly:      inchToMm(toFloat(d.Get("yearlyrainin"))),
 		UV:                toInt(d.Get("UV")),
 		IndoorTemperature: fahrenheitToCelsius(toFloat(d.Get("indoortempf"))),
 		IndoorHumidity:    toInt(d.Get("indoorhumidity")),
@@ -77,4 +77,9 @@ func mphToKph(mph float64) float64 {
 
 func hgToKpa(hg float64) float64 {
 	return hg * 33.8638866667
+}
+
+// function to convert inch to milimeter
+func inchToMm(inch float64) float64 {
+	return inch * 25.4
 }
