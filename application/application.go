@@ -11,16 +11,18 @@ import (
 )
 
 type Application struct {
-	config *config.Config
-	logger *log.Logger
-	mqtt   *mqtt.MQTT
+	config  *config.Config
+	logger  *log.Logger
+	mqtt    *mqtt.MQTT
+	weather *Weather
 }
 
 func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) *Application {
 	return &Application{
-		config: config,
-		logger: logger,
-		mqtt:   mqtt,
+		config:  config,
+		logger:  logger,
+		mqtt:    mqtt,
+		weather: &Weather{},
 	}
 }
 
