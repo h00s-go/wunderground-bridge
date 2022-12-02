@@ -44,6 +44,7 @@ func NewWeather(data string) (*Weather, error) {
 		RainInWeekly:      inchToMm(toFloat(d.Get("weeklyrainin"))),
 		RainInMonthly:     inchToMm(toFloat(d.Get("monthlyrainin"))),
 		RainInYearly:      inchToMm(toFloat(d.Get("yearlyrainin"))),
+		SolarRadiation:    toFloat(d.Get("solarradiation")),
 		UV:                toInt(d.Get("UV")),
 		IndoorTemperature: fahrenheitToCelsius(toFloat(d.Get("indoortempf"))),
 		IndoorHumidity:    toInt(d.Get("indoorhumidity")),
