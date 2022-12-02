@@ -26,8 +26,8 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 	}
 }
 
-func (app *Application) publishWeatherToMQTT(weather *Weather) {
-	w, err := json.Marshal(weather)
+func (app *Application) publishWeatherToMQTT() {
+	w, err := json.Marshal(app.weather)
 	if err == nil {
 		app.mqtt.Publish(app.config.MQTT.WeatherTopic, string(w))
 	}

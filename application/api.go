@@ -16,9 +16,10 @@ func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	weather, err := NewWeatherFromStation(r.URL.RawQuery)
+	var err error
+	app.weather, err = NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
-		go app.publishWeatherToMQTT(weather)
+		go app.publishWeatherToMQTT()
 	} else {
 		app.logger.Println("Error parsing weather: ", err)
 	}
