@@ -5,8 +5,7 @@ import (
 )
 
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	app.logger.Println(r.URL.RawQuery)
-	weather, err := NewWeather(r.URL.RawQuery)
+	weather, err := NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
 		go app.publishWeatherToMQTT(weather)
 	} else {
