@@ -1,6 +1,10 @@
 package application
 
-import "strconv"
+import (
+	"strconv"
+
+	"github.com/shopspring/decimal"
+)
 
 func strToInt(s string) int {
 	i, err := strconv.Atoi(s)
@@ -18,19 +22,26 @@ func strToFloat(s string) float64 {
 	return f
 }
 
-func convertFahrenheitToCelsius(f float64) float64 {
-	return (f - 32) * 5 / 9
+func strToDecimal(s string) decimal.Decimal {
+	d, err := decimal.NewFromString(s)
+	if err != nil {
+		return decimal.Zero
+	}
+	return d.Round(2)
 }
 
-func convertMileToKilometer(mph float64) float64 {
-	return mph * 1.609344
+func convertFahrenheitToCelsius(f float64) decimal.Decimal {
+	return decimal.NewFromFloat((f - 32) * 5 / 9).Round(2)
 }
 
-func convertHGToKPA(hg float64) float64 {
-	return hg * 33.8638866667
+func convertMileToKilometer(mph float64) decimal.Decimal {
+	return decimal.NewFromFloat(mph * 1.609344).Round(2)
 }
 
-// function to convert inch to milimeter
-func convertInchToMillimeter(inch float64) float64 {
-	return inch * 25.4
+func convertHGToKPA(hg float64) decimal.Decimal {
+	return decimal.NewFromFloat(hg * 33.8638866667).Round(2)
+}
+
+func convertInchToMillimeter(inch float64) decimal.Decimal {
+	return decimal.NewFromFloat(inch * 25.4).Round(2)
 }

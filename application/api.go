@@ -6,7 +6,7 @@ import (
 )
 
 func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
-	weather, err := json.Marshal(app.weather)
+	weather, err := json.MarshalIndent(app.weather, "", "\t")
 	if err == nil {
 		w.WriteHeader(http.StatusOK)
 		w.Write(weather)
