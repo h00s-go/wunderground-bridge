@@ -24,6 +24,7 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 		app.logger.Println("Error parsing weather: ", err)
 	}
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("success"))
 	go app.updateWunderground(r.URL.RawQuery)
 }
 
