@@ -10,11 +10,12 @@ type Config struct {
 }
 
 type Wunderground struct {
-	Update    bool
+	Enabled   bool
 	UpdateURL string
 }
 
 type MQTT struct {
+	Enabled     bool
 	Broker      string
 	Port        string
 	Username    string

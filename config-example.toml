@@ -1,8 +1,9 @@
 [wunderground]
-update = true
+enabled = true
 updateurl = "http://rtupdate.wunderground.com/weatherstation/updateweatherstation.php"
 
 [mqtt]
+enabled = true
 broker = "1.2.3.4:1883"
 clientid = "wunderground-bridge"
 username = "user"

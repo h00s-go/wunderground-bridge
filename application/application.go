@@ -34,11 +34,9 @@ func (app *Application) publishWeatherToMQTT() {
 }
 
 func (app *Application) updateWunderground(query string) {
-	if app.config.Wunderground.Update {
-		url := fmt.Sprintf("%v?%v", app.config.Wunderground.UpdateURL, query)
-		_, err := http.Get(url)
-		if err != nil {
-			app.logger.Printf("Error: %v\n", err)
-		}
+	url := fmt.Sprintf("%v?%v", app.config.Wunderground.UpdateURL, query)
+	_, err := http.Get(url)
+	if err != nil {
+		app.logger.Printf("Error updating wunderground: %v\n", err)
 	}
 }

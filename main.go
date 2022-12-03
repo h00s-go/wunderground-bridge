@@ -19,10 +19,13 @@ func main() {
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 
-	mqtt := mqtt.NewMQTT(&cfg.MQTT)
-	defer mqtt.Close()
+	var m *mqtt.MQTT
+	if cfg.MQTT.Enabled {
+		m = mqtt.NewMQTT(&cfg.MQTT)
+		defer m.Close()
+	}
 
-	app := application.NewApplication(cfg, logger, mqtt)
+	app := application.NewApplication(cfg, logger, m)
 
 	fmt.Println("Listening on :8080")
 	http.ListenAndServe(":8080", app.NewRouter())

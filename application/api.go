@@ -19,13 +19,17 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 	var err error
 	app.weather, err = NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
-		go app.publishWeatherToMQTT()
+		if app.config.MQTT.Enabled {
+			go app.publishWeatherToMQTT()
+		}
+		if app.config.Wunderground.Enabled {
+			go app.updateWunderground(r.URL.RawQuery)
+		}
 	} else {
 		app.logger.Println("Error parsing weather: ", err)
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
-	go app.updateWunderground(r.URL.RawQuery)
 }
 
 func (app *Application) defaultHandler(w http.ResponseWriter, r *http.Request) {
