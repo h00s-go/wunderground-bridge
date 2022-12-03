@@ -10,17 +10,17 @@ type Config struct {
 }
 
 type Wunderground struct {
-	PassUpdate bool
-	UpdateURL  string
+	Update    bool
+	UpdateURL string
 }
 
 type MQTT struct {
-	Broker       string
-	Port         string
-	Username     string
-	Password     string
-	ClientID     string
-	WeatherTopic string
+	Broker      string
+	Port        string
+	Username    string
+	Password    string
+	ClientID    string
+	UpdateTopic string
 }
 
 func NewConfig(path string) (*Config, error) {

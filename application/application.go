@@ -29,12 +29,12 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 func (app *Application) publishWeatherToMQTT() {
 	w, err := json.Marshal(app.weather)
 	if err == nil {
-		app.mqtt.Publish(app.config.MQTT.WeatherTopic, string(w))
+		app.mqtt.Publish(app.config.MQTT.UpdateTopic, string(w))
 	}
 }
 
 func (app *Application) updateWunderground(query string) {
-	if app.config.Wunderground.PassUpdate {
+	if app.config.Wunderground.Update {
 		url := fmt.Sprintf("%v?%v", app.config.Wunderground.UpdateURL, query)
 		_, err := http.Get(url)
 		if err != nil {
