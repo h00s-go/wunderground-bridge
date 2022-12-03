@@ -15,6 +15,7 @@ type Application struct {
 	logger  *log.Logger
 	mqtt    *mqtt.MQTT
 	weather *Weather
+	update  chan bool
 }
 
 func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) *Application {
@@ -23,6 +24,7 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 		logger:  logger,
 		mqtt:    mqtt,
 		weather: &Weather{},
+		update:  make(chan bool, 1),
 	}
 }
 

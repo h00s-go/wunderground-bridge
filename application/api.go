@@ -3,7 +3,11 @@ package application
 import (
 	"encoding/json"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
+
+var upgrader = websocket.Upgrader{}
 
 func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 	weather, err := json.MarshalIndent(app.weather, "", "\t")
@@ -16,9 +20,30 @@ func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
+	c, err := upgrader.Upgrade(w, r, nil)
+	if err != nil {
+		app.logger.Print("Error while upgrading:", err)
+		return
+	}
+	defer c.Close()
+	for {
+		<-app.update
+		weather, err := json.Marshal(app.weather)
+		if err == nil {
+			err = c.WriteMessage(websocket.TextMessage, weather)
+			if err != nil {
+				app.logger.Print("Error while writing to websocket:", err)
+				return
+			}
+		}
+	}
+}
+
+func (app *Application) stationUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	var err error
 	app.weather, err = NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
+		app.update <- true
 		if app.config.MQTT.Enabled {
 			go app.publishWeatherToMQTT()
 		}
