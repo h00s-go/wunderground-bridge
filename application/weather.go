@@ -5,22 +5,23 @@ import (
 )
 
 type Weather struct {
+	StationID         string  `json:"station_id"`
 	Temperature       float64 `json:"temperature"`
 	Humidity          int     `json:"humidity"`
 	DewPoint          float64 `json:"dewpoint"`
-	WindChill         float64 `json:"windchill"`
-	WindDirection     int     `json:"winddirection"`
-	WindSpeed         float64 `json:"windspeed"`
-	WindGust          float64 `json:"windgust"`
-	RainIn            float64 `json:"rainin"`
-	RainInDaily       float64 `json:"rainindaily"`
-	RainInWeekly      float64 `json:"raininweekly"`
-	RainInMonthly     float64 `json:"raininmonthly"`
-	RainInYearly      float64 `json:"raininyearly"`
-	SolarRadiation    float64 `json:"solarradiation"`
+	WindChill         float64 `json:"wind_chill"`
+	WindDirection     int     `json:"wind_direction"`
+	WindSpeed         float64 `json:"wind_speed"`
+	WindGust          float64 `json:"wind_gust"`
+	RainIn            float64 `json:"rain_in"`
+	RainInDaily       float64 `json:"rain_in_daily"`
+	RainInWeekly      float64 `json:"rain_in_weekly"`
+	RainInMonthly     float64 `json:"rain_in_monthly"`
+	RainInYearly      float64 `json:"rain_in_yearly"`
+	SolarRadiation    float64 `json:"solar_radiation"`
 	UV                int     `json:"uv"`
-	IndoorTemperature float64 `json:"indoortemperature"`
-	IndoorHumidity    int     `json:"indoorhumidity"`
+	IndoorTemperature float64 `json:"indoor_temperature"`
+	IndoorHumidity    int     `json:"indoor_humidity"`
 	Pressure          float64 `json:"pressure"`
 }
 
@@ -31,6 +32,7 @@ func NewWeatherFromStation(data string) (*Weather, error) {
 	}
 
 	return &Weather{
+		StationID:         d.Get("ID"),
 		Temperature:       convertFahrenheitToCelsius(strToFloat(d.Get("tempf"))),
 		Humidity:          strToInt(d.Get("humidity")),
 		DewPoint:          convertFahrenheitToCelsius(strToFloat(d.Get("dewptf"))),
