@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"net/url"
 	"time"
 
@@ -61,13 +62,12 @@ func NewWeatherFromStation(data string) (*Weather, error) {
 		UpdatedAt:         updatedAt,
 	}
 
-	/*if w.validate() {
+	if !w.validate() {
 		return nil, errors.New("invalid weather data")
-	}*/
+	}
 	return w, nil
 }
 
-/*
 func (w *Weather) validate() bool {
 	if w.Temperature.IntPart() < -50 || w.Temperature.IntPart() > 50 {
 		return false
@@ -83,4 +83,3 @@ func (w *Weather) validate() bool {
 	}
 	return true
 }
-*/
