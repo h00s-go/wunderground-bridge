@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"net/url"
 	"time"
 
@@ -39,7 +40,7 @@ func NewWeatherFromStation(data string) (*Weather, error) {
 		return nil, err
 	}
 
-	return &Weather{
+	w := &Weather{
 		StationID:         d.Get("ID"),
 		Temperature:       convertFahrenheitToCelsius(strToFloat(d.Get("tempf"))),
 		Humidity:          strToInt(d.Get("humidity")),
@@ -59,5 +60,26 @@ func NewWeatherFromStation(data string) (*Weather, error) {
 		IndoorHumidity:    strToInt(d.Get("indoorhumidity")),
 		Pressure:          convertHGToKPA(strToFloat(d.Get("baromin"))),
 		UpdatedAt:         updatedAt,
-	}, nil
+	}
+
+	if w.validate() {
+		return nil, errors.New("invalid weather data")
+	}
+	return w, nil
+}
+
+func (w *Weather) validate() bool {
+	if w.Temperature.IntPart() < -50 || w.Temperature.IntPart() > 50 {
+		return false
+	}
+	if w.Humidity < 0 || w.Humidity > 100 {
+		return false
+	}
+	if w.DewPoint.IntPart() < -50 || w.DewPoint.IntPart() > 50 {
+		return false
+	}
+	if w.Pressure.IntPart() < 800 || w.Pressure.IntPart() > 1200 {
+		return false
+	}
+	return true
 }

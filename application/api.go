@@ -39,9 +39,9 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 */
 
 func (app *Application) stationUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	var err error
-	app.weather, err = NewWeatherFromStation(r.URL.RawQuery)
+	weather, err := NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
+		app.weather = weather
 		if app.config.MQTT.Enabled {
 			go app.publishWeatherToMQTT()
 		}
