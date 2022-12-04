@@ -49,7 +49,7 @@ func (app *Application) stationUpdateHandler(w http.ResponseWriter, r *http.Requ
 			go app.updateWunderground(r.URL.RawQuery)
 		}
 	} else {
-		app.logger.Println("Error parsing weather: ", err)
+		app.logger.Println("Error parsing weather: ", err, r.URL.RawQuery)
 	}
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte("success"))
