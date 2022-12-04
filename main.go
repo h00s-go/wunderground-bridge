@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -27,6 +26,6 @@ func main() {
 
 	app := application.NewApplication(cfg, logger, m)
 
-	fmt.Println("Listening on :8080")
+	logger.Println("Listening on :8080")
 	http.ListenAndServe(":8080", app.NewRouter())
 }
