@@ -6,15 +6,17 @@ import (
 	"log"
 	"net/http"
 
+	"github.com/gorilla/websocket"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
 )
 
 type Application struct {
-	config  *config.Config
-	logger  *log.Logger
-	mqtt    *mqtt.MQTT
-	weather *Weather
+	config            *config.Config
+	logger            *log.Logger
+	mqtt              *mqtt.MQTT
+	weather           *Weather
+	websocketUpgrader *websocket.Upgrader
 }
 
 func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) *Application {
@@ -23,6 +25,11 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 		logger:  logger,
 		mqtt:    mqtt,
 		weather: &Weather{},
+		websocketUpgrader: &websocket.Upgrader{
+			CheckOrigin: func(r *http.Request) bool {
+				return true
+			},
+		},
 	}
 }
 

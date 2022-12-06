@@ -3,9 +3,9 @@ package application
 import (
 	"encoding/json"
 	"net/http"
-)
 
-//var upgrader = websocket.Upgrader{}
+	"github.com/gorilla/websocket"
+)
 
 func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 	weather, err := json.MarshalIndent(app.weather, "", "\t")
@@ -17,9 +17,8 @@ func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-/*
 func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := upgrader.Upgrade(w, r, nil)
+	c, err := app.websocketUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		app.logger.Print("Error while upgrading:", err)
 		return
@@ -36,7 +35,6 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 		}
 	}
 }
-*/
 
 func (app *Application) stationUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	weather, err := NewWeatherFromStation(r.URL.RawQuery)
