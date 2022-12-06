@@ -15,7 +15,7 @@ type Application struct {
 	config            *config.Config
 	logger            *log.Logger
 	mqtt              *mqtt.MQTT
-	weather           *Weather
+	station           *Station
 	websocketUpgrader *websocket.Upgrader
 }
 
@@ -24,7 +24,7 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 		config:  config,
 		logger:  logger,
 		mqtt:    mqtt,
-		weather: &Weather{},
+		station: NewStation(),
 		websocketUpgrader: &websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				return true
@@ -34,7 +34,7 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 }
 
 func (app *Application) publishWeatherToMQTT() {
-	w, err := json.Marshal(app.weather)
+	w, err := json.Marshal(app.station.Weather)
 	if err == nil {
 		app.mqtt.Publish(app.config.MQTT.UpdateTopic, string(w))
 	}

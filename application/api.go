@@ -8,7 +8,7 @@ import (
 )
 
 func (app *Application) weatherHandler(w http.ResponseWriter, r *http.Request) {
-	weather, err := json.MarshalIndent(app.weather, "", "\t")
+	weather, err := json.MarshalIndent(app.station.Weather, "", "\t")
 	if err == nil {
 		w.WriteHeader(http.StatusOK)
 		w.Write(weather)
@@ -25,7 +25,7 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 	}
 	defer c.Close()
 	for {
-		weather, err := json.Marshal(app.weather)
+		weather, err := json.Marshal(app.station.Weather)
 		if err == nil {
 			err = c.WriteMessage(websocket.TextMessage, weather)
 			if err != nil {
@@ -39,7 +39,7 @@ func (app *Application) weatherUpdateHandler(w http.ResponseWriter, r *http.Requ
 func (app *Application) stationUpdateHandler(w http.ResponseWriter, r *http.Request) {
 	weather, err := NewWeatherFromStation(r.URL.RawQuery)
 	if err == nil {
-		app.weather = weather
+		app.station.Weather = weather
 		if app.config.MQTT.Enabled {
 			go app.publishWeatherToMQTT()
 		}
