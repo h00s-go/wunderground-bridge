@@ -9,25 +9,41 @@ import (
 )
 
 type Weather struct {
-	StationID         string          `json:"station_id"`
-	Temperature       decimal.Decimal `json:"temperature"`
-	Humidity          int             `json:"humidity"`
-	DewPoint          decimal.Decimal `json:"dew_point"`
-	WindChill         decimal.Decimal `json:"wind_chill"`
-	WindDirection     int             `json:"wind_direction"`
-	WindSpeed         decimal.Decimal `json:"wind_speed"`
-	WindGust          decimal.Decimal `json:"wind_gust"`
-	RainIn            decimal.Decimal `json:"rain_in"`
-	RainInDaily       decimal.Decimal `json:"rain_in_daily"`
-	RainInWeekly      decimal.Decimal `json:"rain_in_weekly"`
-	RainInMonthly     decimal.Decimal `json:"rain_in_monthly"`
-	RainInYearly      decimal.Decimal `json:"rain_in_yearly"`
-	SolarRadiation    decimal.Decimal `json:"solar_radiation"`
-	UV                int             `json:"uv"`
-	IndoorTemperature decimal.Decimal `json:"indoor_temperature"`
-	IndoorHumidity    int             `json:"indoor_humidity"`
-	Pressure          decimal.Decimal `json:"pressure"`
-	UpdatedAt         time.Time       `json:"updated_at"`
+	StationID   string          `json:"station_id"`
+	Temperature decimal.Decimal `json:"temperature"`
+	DewPoint    decimal.Decimal `json:"dew_point"`
+	Humidity    int             `json:"humidity"`
+	Pressure    decimal.Decimal `json:"pressure"`
+	Wind        Wind            `json:"wind"`
+	Rain        Rain            `json:"rain"`
+	Solar       Solar           `json:"solar"`
+	Indoor      Indoor          `json:"indoor"`
+	UpdatedAt   time.Time       `json:"updated_at"`
+}
+
+type Wind struct {
+	Chill     decimal.Decimal `json:"chill"`
+	Direction int             `json:"direction"`
+	Speed     decimal.Decimal `json:"speed"`
+	Gust      decimal.Decimal `json:"gust"`
+}
+
+type Rain struct {
+	In        decimal.Decimal `json:"in"`
+	InDaily   decimal.Decimal `json:"in_daily"`
+	InWeekly  decimal.Decimal `json:"in_weekly"`
+	InMonthly decimal.Decimal `json:"in_monthly"`
+	InYearly  decimal.Decimal `json:"in_yearly"`
+}
+
+type Solar struct {
+	Radiation decimal.Decimal `json:"radiation"`
+	UV        int             `json:"uv"`
+}
+
+type Indoor struct {
+	Temperature decimal.Decimal `json:"temperature"`
+	Humidity    int             `json:"humidity"`
 }
 
 func NewWeatherFromStation(data string) (*Weather, error) {
@@ -41,25 +57,33 @@ func NewWeatherFromStation(data string) (*Weather, error) {
 	}
 
 	w := &Weather{
-		StationID:         d.Get("ID"),
-		Temperature:       convertFahrenheitToCelsius(strToFloat(d.Get("tempf"))),
-		Humidity:          strToInt(d.Get("humidity")),
-		DewPoint:          convertFahrenheitToCelsius(strToFloat(d.Get("dewptf"))),
-		WindChill:         convertFahrenheitToCelsius(strToFloat(d.Get("windchillf"))),
-		WindDirection:     strToInt(d.Get("winddir")),
-		WindSpeed:         convertMileToKilometer(strToFloat(d.Get("windspeedmph"))),
-		WindGust:          convertMileToKilometer(strToFloat(d.Get("windgustmph"))),
-		RainIn:            convertInchToMillimeter(strToFloat(d.Get("rainin"))),
-		RainInDaily:       convertInchToMillimeter(strToFloat(d.Get("dailyrainin"))),
-		RainInWeekly:      convertInchToMillimeter(strToFloat(d.Get("weeklyrainin"))),
-		RainInMonthly:     convertInchToMillimeter(strToFloat(d.Get("monthlyrainin"))),
-		RainInYearly:      convertInchToMillimeter(strToFloat(d.Get("yearlyrainin"))),
-		SolarRadiation:    strToDecimal(d.Get("solarradiation")),
-		UV:                strToInt(d.Get("UV")),
-		IndoorTemperature: convertFahrenheitToCelsius(strToFloat(d.Get("indoortempf"))),
-		IndoorHumidity:    strToInt(d.Get("indoorhumidity")),
-		Pressure:          convertHGToKPA(strToFloat(d.Get("baromin"))),
-		UpdatedAt:         updatedAt,
+		StationID:   d.Get("ID"),
+		Temperature: convertFahrenheitToCelsius(strToFloat(d.Get("tempf"))),
+		DewPoint:    convertFahrenheitToCelsius(strToFloat(d.Get("dewptf"))),
+		Humidity:    strToInt(d.Get("humidity")),
+		Pressure:    convertHGToKPA(strToFloat(d.Get("baromin"))),
+		Wind: Wind{
+			Chill:     convertFahrenheitToCelsius(strToFloat(d.Get("windchillf"))),
+			Direction: strToInt(d.Get("winddir")),
+			Speed:     convertMileToKilometer(strToFloat(d.Get("windspeedmph"))),
+			Gust:      convertMileToKilometer(strToFloat(d.Get("windgustmph"))),
+		},
+		Rain: Rain{
+			In:        convertInchToMillimeter(strToFloat(d.Get("rainin"))),
+			InDaily:   convertInchToMillimeter(strToFloat(d.Get("dailyrainin"))),
+			InWeekly:  convertInchToMillimeter(strToFloat(d.Get("weeklyrainin"))),
+			InMonthly: convertInchToMillimeter(strToFloat(d.Get("monthlyrainin"))),
+			InYearly:  convertInchToMillimeter(strToFloat(d.Get("yearlyrainin"))),
+		},
+		Solar: Solar{
+			Radiation: strToDecimal(d.Get("solarradiation")),
+			UV:        strToInt(d.Get("UV")),
+		},
+		Indoor: Indoor{
+			Temperature: convertFahrenheitToCelsius(strToFloat(d.Get("indoortempf"))),
+			Humidity:    strToInt(d.Get("indoorhumidity")),
+		},
+		UpdatedAt: updatedAt,
 	}
 
 	if !w.validate() {
