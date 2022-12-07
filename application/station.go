@@ -7,30 +7,28 @@ import (
 	"net/http"
 	"net/url"
 	"time"
+
+	"github.com/h00s-go/wunderground-bridge/config"
 )
 
 type Station struct {
-	URL      string
+	config   *config.Station
 	logger   *log.Logger
 	Watchdog Watchdog
 	Weather  *Weather
 }
 
 type Watchdog struct {
-	SuccessfulLastUpdate   bool
-	RebootOnFailedAttempts int
-	FailedAttempts         int
+	SuccessfulLastUpdate bool
+	FailedAttempts       int
 }
 
-func NewStation(l *log.Logger) *Station {
+func NewStation(config *config.Station, logger *log.Logger) *Station {
 	return &Station{
-		URL:    "http://10.172.2.4:8080",
-		logger: l,
-		Watchdog: Watchdog{
-			SuccessfulLastUpdate:   true,
-			RebootOnFailedAttempts: 15,
-		},
-		Weather: &Weather{},
+		config:   config,
+		logger:   logger,
+		Watchdog: Watchdog{},
+		Weather:  &Weather{},
 	}
 }
 
@@ -84,23 +82,25 @@ func (s *Station) NewWeather(r *http.Request) error {
 }
 
 func (s *Station) UpdateWatchDog(success bool) {
-	if success {
-		s.Watchdog.SuccessfulLastUpdate = true
-		s.Watchdog.FailedAttempts = 0
-		return
+	if s.config.WatchdogEnabled {
+		if success {
+			s.Watchdog.SuccessfulLastUpdate = true
+			s.Watchdog.FailedAttempts = 0
+			return
+		}
+		if s.Watchdog.FailedAttempts >= s.config.RebootOnFailedAttempts {
+			s.logger.Println("Attempting reboot")
+			go s.attemptReboot()
+			s.Watchdog.FailedAttempts = 0
+		}
+		s.Watchdog.SuccessfulLastUpdate = false
+		s.Watchdog.FailedAttempts++
+		s.logger.Printf("Failed %v time(s) to update weather data", s.Watchdog.FailedAttempts)
 	}
-	if s.Watchdog.FailedAttempts >= s.Watchdog.RebootOnFailedAttempts {
-		s.logger.Println("Attempting reboot")
-		go s.attemptReboot()
-		s.Watchdog.FailedAttempts = 0
-	}
-	s.Watchdog.SuccessfulLastUpdate = false
-	s.Watchdog.FailedAttempts++
-	s.logger.Printf("Failed %v time(s) to update weather data", s.Watchdog.FailedAttempts)
 }
 
 func (s *Station) attemptReboot() {
-	_, err := http.Get(fmt.Sprintf("%s/msgreboot.htm", s.URL))
+	_, err := http.Get(fmt.Sprintf("%s/msgreboot.htm", s.config.URL))
 	if err != nil {
 		s.logger.Printf("Error while reboot attempt: %v\n", err)
 	}

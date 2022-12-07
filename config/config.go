@@ -5,8 +5,15 @@ import (
 )
 
 type Config struct {
+	Station      Station
 	Wunderground Wunderground
 	MQTT         MQTT
+}
+
+type Station struct {
+	URL                    string
+	WatchdogEnabled        bool
+	RebootOnFailedAttempts int
 }
 
 type Wunderground struct {

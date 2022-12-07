@@ -14,17 +14,17 @@ import (
 type Application struct {
 	config            *config.Config
 	logger            *log.Logger
-	mqtt              *mqtt.MQTT
 	station           *Station
+	mqtt              *mqtt.MQTT
 	websocketUpgrader *websocket.Upgrader
 }
 
-func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) *Application {
+func NewApplication(config *config.Config, logger *log.Logger, station *Station, mqtt *mqtt.MQTT) *Application {
 	return &Application{
 		config:  config,
 		logger:  logger,
+		station: station,
 		mqtt:    mqtt,
-		station: NewStation(logger),
 		websocketUpgrader: &websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				return true
