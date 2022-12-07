@@ -24,7 +24,7 @@ func NewApplication(config *config.Config, logger *log.Logger, mqtt *mqtt.MQTT) 
 		config:  config,
 		logger:  logger,
 		mqtt:    mqtt,
-		station: NewStation(),
+		station: NewStation(logger),
 		websocketUpgrader: &websocket.Upgrader{
 			CheckOrigin: func(r *http.Request) bool {
 				return true
