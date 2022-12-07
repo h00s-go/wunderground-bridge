@@ -72,12 +72,13 @@ func (s *Station) NewWeather(r *http.Request) error {
 		UpdatedAt: updatedAt,
 	}
 
-	if !w.validate() {
-		s.UpdateWatchDog(false)
+	validWeather := w.validate()
+	s.UpdateWatchDog(validWeather)
+	if !validWeather {
 		return errors.New("invalid weather data")
 	}
+
 	s.Weather = w
-	s.UpdateWatchDog(true)
 	return nil
 }
 
