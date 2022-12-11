@@ -2,6 +2,8 @@ package config
 
 import (
 	"log"
+	"os"
+	"strconv"
 
 	"github.com/BurntSushi/toml"
 )
@@ -26,7 +28,6 @@ type Wunderground struct {
 type MQTT struct {
 	Enabled     bool
 	Broker      string
-	Port        string
 	Username    string
 	Password    string
 	ClientID    string
@@ -38,6 +39,7 @@ func NewConfig() *Config {
 	if err := c.loadConfigFromFile("config.toml"); err != nil {
 		log.Println("Unable to load config.toml, loaded defaults...")
 	}
+	c.applyEnvirontmentVariables()
 
 	return c
 }
@@ -60,4 +62,35 @@ func (c *Config) loadConfigFromFile(path string) error {
 	}
 
 	return nil
+}
+
+func (c *Config) applyEnvirontmentVariables() {
+	applyEnvirontmentVariable("STATION_URL", &c.Station.URL)
+	applyEnvirontmentVariable("STATION_WATCHDOG_ENABLED", &c.Station.WatchdogEnabled)
+	applyEnvirontmentVariable("STATION_REBOOT_ON_FAILED_ATTEMPTS", &c.Station.RebootOnFailedAttempts)
+	applyEnvirontmentVariable("WUNDERGROUND_ENABLED", &c.Wunderground.Enabled)
+	applyEnvirontmentVariable("WUNDERGROUND_UPDATE_URL", &c.Wunderground.UpdateURL)
+	applyEnvirontmentVariable("MQTT_ENABLED", &c.MQTT.Enabled)
+	applyEnvirontmentVariable("MQTT_BROKER", &c.MQTT.Broker)
+	applyEnvirontmentVariable("MQTT_USERNAME", &c.MQTT.Username)
+	applyEnvirontmentVariable("MQTT_PASSWORD", &c.MQTT.Password)
+	applyEnvirontmentVariable("MQTT_CLIENT_ID", &c.MQTT.ClientID)
+	applyEnvirontmentVariable("MQTT_UPDATE_TOPIC", &c.MQTT.UpdateTopic)
+}
+
+func applyEnvirontmentVariable(key string, value interface{}) {
+	if env, ok := os.LookupEnv(key); ok {
+		switch v := value.(type) {
+		case *string:
+			*v = env
+		case *bool:
+			if env == "true" || env == "1" {
+				*v = true
+			} else if env == "false" || env == "0" {
+				*v = false
+			}
+		case *int:
+			*v, _ = strconv.Atoi(env)
+		}
+	}
 }
