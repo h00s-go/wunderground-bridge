@@ -90,7 +90,9 @@ func applyEnvirontmentVariable(key string, value interface{}) {
 				*v = false
 			}
 		case *int:
-			*v, _ = strconv.Atoi(env)
+			if number, err := strconv.Atoi(env); err == nil {
+				*v = number
+			}
 		}
 	}
 }
