@@ -11,10 +11,7 @@ import (
 )
 
 func main() {
-	config, err := config.NewConfig("config.toml")
-	if err != nil {
-		log.Fatal(err)
-	}
+	config := config.NewConfig()
 
 	var MQTT *mqtt.MQTT
 	if config.MQTT.Enabled {

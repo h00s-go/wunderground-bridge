@@ -1,6 +1,8 @@
 package config
 
 import (
+	"log"
+
 	"github.com/BurntSushi/toml"
 )
 
@@ -31,12 +33,31 @@ type MQTT struct {
 	UpdateTopic string
 }
 
-func NewConfig(path string) (*Config, error) {
-	c := new(Config)
-
-	if _, err := toml.DecodeFile(path, c); err != nil {
-		return c, err
+func NewConfig() *Config {
+	c := NewConfigDefaults()
+	if err := c.loadConfigFromFile("config.toml"); err != nil {
+		log.Println("Unable to load config.toml, loaded defaults...")
 	}
 
-	return c, nil
+	return c
+}
+
+func NewConfigDefaults() *Config {
+	return &Config{
+		Station: Station{
+			RebootOnFailedAttempts: 15,
+		},
+		Wunderground: Wunderground{
+			Enabled:   true,
+			UpdateURL: "http://weatherstation.wunderground.com/weatherstation/updateweatherstation.php",
+		},
+	}
+}
+
+func (c *Config) loadConfigFromFile(path string) error {
+	if _, err := toml.DecodeFile(path, c); err != nil {
+		return err
+	}
+
+	return nil
 }
