@@ -15,6 +15,8 @@ type Config struct {
 }
 
 type Station struct {
+	ID                     string
+	Password               string
 	URL                    string
 	WatchdogEnabled        bool
 	RebootOnFailedAttempts int
@@ -65,6 +67,8 @@ func (c *Config) loadConfigFromFile(path string) error {
 }
 
 func (c *Config) applyEnvirontmentVariables() {
+	applyEnvirontmentVariable("STATION_ID", &c.Station.ID)
+	applyEnvirontmentVariable("STATION_PASSWORD", &c.Station.Password)
 	applyEnvirontmentVariable("STATION_URL", &c.Station.URL)
 	applyEnvirontmentVariable("STATION_WATCHDOG_ENABLED", &c.Station.WatchdogEnabled)
 	applyEnvirontmentVariable("STATION_REBOOT_ON_FAILED_ATTEMPTS", &c.Station.RebootOnFailedAttempts)

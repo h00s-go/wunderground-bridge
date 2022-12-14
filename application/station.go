@@ -37,6 +37,12 @@ func (s *Station) NewWeather(r *http.Request) error {
 	if err != nil {
 		return err
 	}
+	if d.Get("ID") != s.config.ID {
+		return errors.New("Station ID does not match")
+	}
+	if d.Get("PASSWORD") != s.config.Password {
+		return errors.New("Station password does not match")
+	}
 	updatedAt, err := time.Parse("2006-01-02 15:04:05", d.Get("dateutc"))
 	if err != nil {
 		return err
