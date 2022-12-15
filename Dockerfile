@@ -1,15 +1,16 @@
-FROM golang:1.19-alpine
+FROM golang:1.19-alpine AS build
 
-WORKDIR /app
-
-COPY go.mod ./
-COPY go.sum ./
-RUN go mod download
+WORKDIR /src
 
 COPY . ./
 
-RUN go build -o /wunderground-bridge
+RUN go mod download && \
+    go build -o /out/wunderground-bridge
+
+FROM alpine
+
+COPY --from=build /out/wunderground-bridge /bin
 
 EXPOSE 8080
 
-CMD [ "/wunderground-bridge" ]
+CMD [ "/bin/wunderground-bridge" ]
