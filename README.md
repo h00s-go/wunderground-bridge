@@ -82,3 +82,39 @@ services:
       - MQTT_CLIENT_ID=wunderground-bridge
       - MQTT_UPDATE_TOPIC=weather-station/update
 ```
+
+## API
+
+Current weather can be retrieved using API. It is available on `/weather` endpoint. Example response:
+
+```json
+{
+	"station_id": "IABCDEF",
+	"temperature": "2.28",
+	"dew_point": "1.11",
+	"humidity": 92,
+	"pressure": "1012.53",
+	"wind": {
+		"chill": "2.28",
+		"direction": 1,
+		"speed": "2.53",
+		"gust": "3.96"
+	},
+	"rain": {
+		"in": "0",
+		"in_daily": "0",
+		"in_weekly": "0",
+		"in_monthly": "119.38",
+		"in_yearly": "123.19"
+	},
+	"solar": {
+		"radiation": "72.42",
+		"uv": 1
+	},
+	"indoor": {
+		"temperature": "5.11",
+		"humidity": 83
+	},
+	"updated_at": "2022-12-21T11:18:21Z"
+}
+```
