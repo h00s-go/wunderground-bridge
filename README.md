@@ -85,7 +85,7 @@ services:
 
 ## API
 
-Current weather can be retrieved using API. It is available on `/weather` endpoint. Example response:
+Current weather can be retrieved using API. It is available on `/api/weather` endpoint. Example response:
 
 ```json
 {
