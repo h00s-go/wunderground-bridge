@@ -9,11 +9,14 @@ import (
 )
 
 type MQTT struct {
+	Config *config.MQTT
 	client mqtt.Client
 }
 
 func NewMQTT(c *config.MQTT) *MQTT {
-	m := new(MQTT)
+	m := &MQTT{
+		Config: c,
+	}
 
 	opts := mqtt.NewClientOptions().AddBroker(c.Broker)
 	opts.SetClientID(c.ClientID)

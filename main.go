@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"os"
 
-	"github.com/h00s-go/wunderground-bridge/application"
+	"github.com/h00s-go/wunderground-bridge/api"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
+	"github.com/h00s-go/wunderground-bridge/station"
 )
 
 func main() {
@@ -20,9 +21,10 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	station := application.NewStation(&config.Station, logger)
-	app := application.NewApplication(config, logger, station, MQTT)
+	wunderground := station.NewWunderground(&config.Wunderground)
+	station := station.NewStation(&config.Station, logger)
+	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 
 	logger.Println("Listening on :8080")
-	http.ListenAndServe(":8080", app.NewRouter())
+	http.ListenAndServe(":8080", api.NewRouter())
 }

@@ -20,6 +20,7 @@ type Station struct {
 	URL                    string
 	WatchdogEnabled        bool
 	RebootOnFailedAttempts int
+	MQTTUpdateTopic        string
 }
 
 type Wunderground struct {
@@ -28,12 +29,11 @@ type Wunderground struct {
 }
 
 type MQTT struct {
-	Enabled     bool
-	Broker      string
-	Username    string
-	Password    string
-	ClientID    string
-	UpdateTopic string
+	Enabled  bool
+	Broker   string
+	Username string
+	Password string
+	ClientID string
 }
 
 func NewConfig() *Config {
@@ -72,14 +72,16 @@ func (c *Config) applyEnvirontmentVariables() {
 	applyEnvirontmentVariable("STATION_URL", &c.Station.URL)
 	applyEnvirontmentVariable("STATION_WATCHDOG_ENABLED", &c.Station.WatchdogEnabled)
 	applyEnvirontmentVariable("STATION_REBOOT_ON_FAILED_ATTEMPTS", &c.Station.RebootOnFailedAttempts)
+	applyEnvirontmentVariable("STATION_MQTT_UPDATE_TOPIC", &c.Station.MQTTUpdateTopic)
+
 	applyEnvirontmentVariable("WUNDERGROUND_ENABLED", &c.Wunderground.Enabled)
 	applyEnvirontmentVariable("WUNDERGROUND_UPDATE_URL", &c.Wunderground.UpdateURL)
+
 	applyEnvirontmentVariable("MQTT_ENABLED", &c.MQTT.Enabled)
 	applyEnvirontmentVariable("MQTT_BROKER", &c.MQTT.Broker)
 	applyEnvirontmentVariable("MQTT_USERNAME", &c.MQTT.Username)
 	applyEnvirontmentVariable("MQTT_PASSWORD", &c.MQTT.Password)
 	applyEnvirontmentVariable("MQTT_CLIENT_ID", &c.MQTT.ClientID)
-	applyEnvirontmentVariable("MQTT_UPDATE_TOPIC", &c.MQTT.UpdateTopic)
 }
 
 func applyEnvirontmentVariable(key string, value interface{}) {

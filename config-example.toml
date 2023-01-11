@@ -4,6 +4,7 @@ password = "PASSWORD1"
 url = "http://192.168.0.2"
 watchdogenabled = true
 rebootonfailedattempts = 15
+mqttupdatetopic = "wunderground-bridge/weather"
 
 [wunderground]
 enabled = true
@@ -15,4 +16,3 @@ broker = "1.2.3.4:1883"
 clientid = "wunderground-bridge"
 username = "user"
 password = "pass"
-updatetopic = "wunderground-bridge/weather"

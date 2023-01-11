@@ -1,4 +1,4 @@
-package application
+package models
 
 import (
 	"time"
@@ -44,7 +44,7 @@ type Indoor struct {
 	Humidity    int             `json:"humidity"`
 }
 
-func (w *Weather) validate() bool {
+func (w *Weather) Validate() bool {
 	if w.Temperature.IntPart() < -50 || w.Temperature.IntPart() > 50 {
 		return false
 	}

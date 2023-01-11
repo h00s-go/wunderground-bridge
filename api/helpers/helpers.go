@@ -1,4 +1,4 @@
-package application
+package helpers
 
 import (
 	"strconv"
@@ -6,7 +6,7 @@ import (
 	"github.com/shopspring/decimal"
 )
 
-func strToInt(s string) int {
+func StrToInt(s string) int {
 	i, err := strconv.Atoi(s)
 	if err != nil {
 		return 0
@@ -14,7 +14,7 @@ func strToInt(s string) int {
 	return i
 }
 
-func strToFloat(s string) float64 {
+func StrToFloat(s string) float64 {
 	f, err := strconv.ParseFloat(s, 64)
 	if err != nil {
 		return 0.0
@@ -22,7 +22,7 @@ func strToFloat(s string) float64 {
 	return f
 }
 
-func strToDecimal(s string) decimal.Decimal {
+func StrToDecimal(s string) decimal.Decimal {
 	d, err := decimal.NewFromString(s)
 	if err != nil {
 		return decimal.Zero
@@ -30,18 +30,18 @@ func strToDecimal(s string) decimal.Decimal {
 	return d.Round(2)
 }
 
-func convertFahrenheitToCelsius(f float64) decimal.Decimal {
+func ConvertFahrenheitToCelsius(f float64) decimal.Decimal {
 	return decimal.NewFromFloat((f - 32) * 5 / 9).Round(2)
 }
 
-func convertMileToKilometer(mph float64) decimal.Decimal {
+func ConvertMileToKilometer(mph float64) decimal.Decimal {
 	return decimal.NewFromFloat(mph * 1.609344).Round(2)
 }
 
-func convertHGToKPA(hg float64) decimal.Decimal {
+func ConvertHGToKPA(hg float64) decimal.Decimal {
 	return decimal.NewFromFloat(hg * 33.8638866667).Round(2)
 }
 
-func convertInchToMillimeter(inch float64) decimal.Decimal {
+func ConvertInchToMillimeter(inch float64) decimal.Decimal {
 	return decimal.NewFromFloat(inch * 25.4).Round(2)
 }
