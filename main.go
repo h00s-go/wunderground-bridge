@@ -2,7 +2,6 @@ package main
 
 import (
 	"log"
-	"net/http"
 	"os"
 
 	"github.com/h00s-go/wunderground-bridge/api"
@@ -26,5 +25,7 @@ func main() {
 	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 
 	logger.Println("Listening on :8080")
-	http.ListenAndServe(":8080", api.NewRouter())
+	api.SetRoutes()
+	api.Start()
+	api.WaitForShutdown()
 }

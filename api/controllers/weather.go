@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"net/http"
 
-	"github.com/gorilla/websocket"
+	"github.com/gofiber/fiber/v2"
 	"github.com/h00s-go/wunderground-bridge/api/services"
 )
 
@@ -18,18 +18,19 @@ func NewWeatherController(services *services.Services) *WeatherController {
 	}
 }
 
-func (wc *WeatherController) WeatherHandler(w http.ResponseWriter, r *http.Request) {
+func (wc *WeatherController) GetWeatherHandler(ctx *fiber.Ctx) error {
 	weather, err := json.MarshalIndent(wc.services.Station.Weather, "", "\t")
 	if err == nil {
-		w.WriteHeader(http.StatusOK)
-		w.Write(weather)
+		ctx.Status(http.StatusOK)
+		return ctx.Send(weather)
 	} else {
-		w.WriteHeader(http.StatusInternalServerError)
+		ctx.Status(http.StatusInternalServerError)
+		return err
 	}
 }
 
-func (wc *WeatherController) WeatherUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	c, err := wc.services.WebsocketUpgrader.Upgrade(w, r, nil)
+func (wc *WeatherController) GetWeatherUpdateHandler(ctx *fiber.Ctx) error {
+	/*c, err := wc.services.WebsocketUpgrader.Upgrade(w, r, nil)
 	if err != nil {
 		wc.services.Logger.Print("Error while upgrading:", err)
 		return
@@ -44,5 +45,6 @@ func (wc *WeatherController) WeatherUpdateHandler(w http.ResponseWriter, r *http
 				return
 			}
 		}
-	}
+	}*/
+	return nil
 }

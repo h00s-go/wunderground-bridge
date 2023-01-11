@@ -3,22 +3,20 @@ package api
 import (
 	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/h00s-go/wunderground-bridge/api/controllers"
 )
 
-func (api *API) NewRouter() *http.ServeMux {
+func (api *API) SetRoutes() {
 	wc := controllers.NewWeatherController(api.services)
 	sc := controllers.NewStationController(api.services)
 
-	m := http.NewServeMux()
-	m.HandleFunc("/weatherstation/updateweatherstation.php", sc.StationUpdateHandler)
+	api.server.Get("/weatherstation/updateweatherstation.php", sc.GetStationUpdateHandler)
 
-	m.HandleFunc("/api/weather/update", wc.WeatherUpdateHandler)
-	m.HandleFunc("/api/weather", wc.WeatherHandler)
+	api.server.Get("/api/weather/update", wc.GetWeatherUpdateHandler)
+	api.server.Get("/api/weather", wc.GetWeatherHandler)
 
-	m.HandleFunc("/", func(w http.ResponseWriter, r *http.Request) {
-		w.WriteHeader(http.StatusOK)
+	api.server.Get("/", func(ctx *fiber.Ctx) error {
+		return ctx.SendStatus(http.StatusOK)
 	})
-
-	return m
 }

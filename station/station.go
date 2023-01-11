@@ -6,9 +6,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"net/url"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/h00s-go/wunderground-bridge/api/helpers"
 	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/config"
@@ -36,48 +36,44 @@ func NewStation(config *config.Station, logger *log.Logger) *Station {
 	}
 }
 
-func (s *Station) NewWeather(r *http.Request) error {
-	d, err := url.ParseQuery(r.URL.RawQuery)
-	if err != nil {
-		return err
-	}
-	if d.Get("ID") != s.config.ID {
+func (s *Station) NewWeather(ctx *fiber.Ctx) error {
+	if ctx.Query("ID") != s.config.ID {
 		return errors.New("Station ID does not match")
 	}
-	if d.Get("PASSWORD") != s.config.Password {
+	if ctx.Query("PASSWORD") != s.config.Password {
 		return errors.New("Station password does not match")
 	}
-	updatedAt, err := time.Parse("2006-01-02 15:04:05", d.Get("dateutc"))
+	updatedAt, err := time.Parse("2006-01-02 15:04:05", ctx.Query("dateutc"))
 	if err != nil {
 		return err
 	}
 
 	w := &models.Weather{
-		StationID:   d.Get("ID"),
-		Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(d.Get("tempf"))),
-		DewPoint:    helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(d.Get("dewptf"))),
-		Humidity:    helpers.StrToInt(d.Get("humidity")),
-		Pressure:    helpers.ConvertHGToKPA(helpers.StrToFloat(d.Get("baromin"))),
+		StationID:   ctx.Query("ID"),
+		Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("tempf"))),
+		DewPoint:    helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("dewptf"))),
+		Humidity:    helpers.StrToInt(ctx.Query("humidity")),
+		Pressure:    helpers.ConvertHGToKPA(helpers.StrToFloat(ctx.Query("baromin"))),
 		Wind: models.Wind{
-			Chill:     helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(d.Get("windchillf"))),
-			Direction: helpers.StrToInt(d.Get("winddir")),
-			Speed:     helpers.ConvertMileToKilometer(helpers.StrToFloat(d.Get("windspeedmph"))),
-			Gust:      helpers.ConvertMileToKilometer(helpers.StrToFloat(d.Get("windgustmph"))),
+			Chill:     helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("windchillf"))),
+			Direction: helpers.StrToInt(ctx.Query("winddir")),
+			Speed:     helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windspeedmph"))),
+			Gust:      helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windgustmph"))),
 		},
 		Rain: models.Rain{
-			In:        helpers.ConvertInchToMillimeter(helpers.StrToFloat(d.Get("rainin"))),
-			InDaily:   helpers.ConvertInchToMillimeter(helpers.StrToFloat(d.Get("dailyrainin"))),
-			InWeekly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(d.Get("weeklyrainin"))),
-			InMonthly: helpers.ConvertInchToMillimeter(helpers.StrToFloat(d.Get("monthlyrainin"))),
-			InYearly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(d.Get("yearlyrainin"))),
+			In:        helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("rainin"))),
+			InDaily:   helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("dailyrainin"))),
+			InWeekly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("weeklyrainin"))),
+			InMonthly: helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("monthlyrainin"))),
+			InYearly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("yearlyrainin"))),
 		},
 		Solar: models.Solar{
-			Radiation: helpers.StrToDecimal(d.Get("solarradiation")),
-			UV:        helpers.StrToInt(d.Get("UV")),
+			Radiation: helpers.StrToDecimal(ctx.Query("solarradiation")),
+			UV:        helpers.StrToInt(ctx.Query("UV")),
 		},
 		Indoor: models.Indoor{
-			Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(d.Get("indoortempf"))),
-			Humidity:    helpers.StrToInt(d.Get("indoorhumidity")),
+			Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("indoortempf"))),
+			Humidity:    helpers.StrToInt(ctx.Query("indoorhumidity")),
 		},
 		UpdatedAt: updatedAt,
 	}

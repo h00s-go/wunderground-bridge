@@ -3,6 +3,7 @@ package controllers
 import (
 	"net/http"
 
+	"github.com/gofiber/fiber/v2"
 	"github.com/h00s-go/wunderground-bridge/api/services"
 )
 
@@ -16,13 +17,13 @@ func NewStationController(services *services.Services) *StationController {
 	}
 }
 
-func (sc *StationController) StationUpdateHandler(w http.ResponseWriter, r *http.Request) {
-	if err := sc.services.Station.NewWeather(r); err == nil {
+func (sc *StationController) GetStationUpdateHandler(ctx *fiber.Ctx) error {
+	if err := sc.services.Station.NewWeather(ctx); err == nil {
 		go sc.services.Station.PublishWeatherToMQTT(sc.services.MQTT)
-		go sc.services.Station.UpdateWunderground(sc.services.Wunderground, r.URL.RawQuery)
+		go sc.services.Station.UpdateWunderground(sc.services.Wunderground, string(ctx.Request().URI().QueryString()))
 	} else {
-		sc.services.Logger.Println("Error parsing weather: ", err, r.URL.RawQuery)
+		sc.services.Logger.Println("Error parsing weather: ", err, string(ctx.Request().URI().QueryString()))
 	}
-	w.WriteHeader(http.StatusOK)
-	w.Write([]byte("success"))
+	ctx.Status(http.StatusOK)
+	return ctx.SendString("success")
 }
