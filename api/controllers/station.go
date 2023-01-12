@@ -18,7 +18,7 @@ func NewStationController(services *services.Services) *StationController {
 }
 
 func (sc *StationController) GetStationUpdateHandler(ctx *fiber.Ctx) error {
-	if err := sc.services.Station.NewWeather(ctx); err == nil {
+	if err := sc.services.Station.UpdateWeather(ctx); err == nil {
 		go sc.services.Station.PublishWeatherToMQTT(sc.services.MQTT)
 		go sc.services.Station.UpdateWunderground(sc.services.Wunderground, string(ctx.Request().URI().QueryString()))
 	} else {

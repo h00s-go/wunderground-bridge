@@ -1,8 +1,11 @@
 package models
 
 import (
+	"errors"
 	"time"
 
+	"github.com/gofiber/fiber/v2"
+	"github.com/h00s-go/wunderground-bridge/api/helpers"
 	"github.com/shopspring/decimal"
 )
 
@@ -42,6 +45,48 @@ type Solar struct {
 type Indoor struct {
 	Temperature decimal.Decimal `json:"temperature"`
 	Humidity    int             `json:"humidity"`
+}
+
+func NewWeather(ctx *fiber.Ctx) (*Weather, error) {
+	updatedAt, err := time.Parse("2006-01-02 15:04:05", ctx.Query("dateutc"))
+	if err != nil {
+		return nil, err
+	}
+
+	w := &Weather{
+		StationID:   ctx.Query("ID"),
+		Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("tempf"))),
+		DewPoint:    helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("dewptf"))),
+		Humidity:    helpers.StrToInt(ctx.Query("humidity")),
+		Pressure:    helpers.ConvertHGToKPA(helpers.StrToFloat(ctx.Query("baromin"))),
+		Wind: Wind{
+			Chill:     helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("windchillf"))),
+			Direction: helpers.StrToInt(ctx.Query("winddir")),
+			Speed:     helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windspeedmph"))),
+			Gust:      helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windgustmph"))),
+		},
+		Rain: Rain{
+			In:        helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("rainin"))),
+			InDaily:   helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("dailyrainin"))),
+			InWeekly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("weeklyrainin"))),
+			InMonthly: helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("monthlyrainin"))),
+			InYearly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("yearlyrainin"))),
+		},
+		Solar: Solar{
+			Radiation: helpers.StrToDecimal(ctx.Query("solarradiation")),
+			UV:        helpers.StrToInt(ctx.Query("UV")),
+		},
+		Indoor: Indoor{
+			Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("indoortempf"))),
+			Humidity:    helpers.StrToInt(ctx.Query("indoorhumidity")),
+		},
+		UpdatedAt: updatedAt,
+	}
+
+	if !w.Validate() {
+		return nil, errors.New("invalid weather data")
+	}
+	return w, nil
 }
 
 func (w *Weather) Validate() bool {

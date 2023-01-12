@@ -6,10 +6,8 @@ import (
 	"fmt"
 	"log"
 	"net/http"
-	"time"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/h00s-go/wunderground-bridge/api/helpers"
 	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
@@ -36,55 +34,22 @@ func NewStation(config *config.Station, logger *log.Logger) *Station {
 	}
 }
 
-func (s *Station) NewWeather(ctx *fiber.Ctx) error {
+func (s *Station) UpdateWeather(ctx *fiber.Ctx) error {
 	if ctx.Query("ID") != s.config.ID {
 		return errors.New("Station ID does not match")
 	}
 	if ctx.Query("PASSWORD") != s.config.Password {
 		return errors.New("Station password does not match")
 	}
-	updatedAt, err := time.Parse("2006-01-02 15:04:05", ctx.Query("dateutc"))
+
+	w, err := models.NewWeather(ctx)
 	if err != nil {
+		s.UpdateWatchDog(false)
 		return err
 	}
-
-	w := &models.Weather{
-		StationID:   ctx.Query("ID"),
-		Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("tempf"))),
-		DewPoint:    helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("dewptf"))),
-		Humidity:    helpers.StrToInt(ctx.Query("humidity")),
-		Pressure:    helpers.ConvertHGToKPA(helpers.StrToFloat(ctx.Query("baromin"))),
-		Wind: models.Wind{
-			Chill:     helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("windchillf"))),
-			Direction: helpers.StrToInt(ctx.Query("winddir")),
-			Speed:     helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windspeedmph"))),
-			Gust:      helpers.ConvertMileToKilometer(helpers.StrToFloat(ctx.Query("windgustmph"))),
-		},
-		Rain: models.Rain{
-			In:        helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("rainin"))),
-			InDaily:   helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("dailyrainin"))),
-			InWeekly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("weeklyrainin"))),
-			InMonthly: helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("monthlyrainin"))),
-			InYearly:  helpers.ConvertInchToMillimeter(helpers.StrToFloat(ctx.Query("yearlyrainin"))),
-		},
-		Solar: models.Solar{
-			Radiation: helpers.StrToDecimal(ctx.Query("solarradiation")),
-			UV:        helpers.StrToInt(ctx.Query("UV")),
-		},
-		Indoor: models.Indoor{
-			Temperature: helpers.ConvertFahrenheitToCelsius(helpers.StrToFloat(ctx.Query("indoortempf"))),
-			Humidity:    helpers.StrToInt(ctx.Query("indoorhumidity")),
-		},
-		UpdatedAt: updatedAt,
-	}
-
-	validWeather := w.Validate()
-	s.UpdateWatchDog(validWeather)
-	if !validWeather {
-		return errors.New("invalid weather data")
-	}
-
+	s.UpdateWatchDog(true)
 	s.Weather = w
+
 	return nil
 }
 
