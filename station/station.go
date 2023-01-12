@@ -43,19 +43,17 @@ func (s *Station) UpdateWeather(ctx *fiber.Ctx) error {
 	}
 
 	w, err := models.NewWeather(ctx)
+	s.UpdateWatchDog(err)
 	if err != nil {
-		s.UpdateWatchDog(false)
 		return err
 	}
-	s.UpdateWatchDog(true)
 	s.Weather = w
-
 	return nil
 }
 
-func (s *Station) UpdateWatchDog(success bool) {
+func (s *Station) UpdateWatchDog(updateError error) {
 	if s.config.WatchdogEnabled {
-		if success {
+		if updateError == nil {
 			s.Watchdog.SuccessfulLastUpdate = true
 			s.Watchdog.FailedAttempts = 0
 			return
