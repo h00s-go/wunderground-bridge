@@ -24,7 +24,6 @@ func main() {
 	station := station.NewStation(&config.Station, logger)
 	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 
-	logger.Println("Listening on :8080")
 	api.SetRoutes()
 	api.Start()
 	api.WaitForShutdown()
