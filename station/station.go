@@ -84,12 +84,3 @@ func (s *Station) PublishWeatherToMQTT(mqtt *mqtt.MQTT) {
 		}
 	}
 }
-
-func (s *Station) UpdateWunderground(w *Wunderground, query string) error {
-	if w.Config.Enabled {
-		url := fmt.Sprintf("%v?%v", w.Config.UpdateURL, query)
-		_, err := http.Get(url)
-		return err
-	}
-	return nil
-}
