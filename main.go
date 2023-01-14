@@ -5,9 +5,9 @@ import (
 	"os"
 
 	"github.com/h00s-go/wunderground-bridge/api"
+	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
-	"github.com/h00s-go/wunderground-bridge/station"
 )
 
 func main() {
@@ -20,8 +20,8 @@ func main() {
 	}
 
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
-	wunderground := station.NewWunderground(&config.Wunderground)
-	station := station.NewStation(&config.Station, logger)
+	wunderground := models.NewWunderground(&config.Wunderground)
+	station := models.NewStation(&config.Station, logger)
 	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 
 	api.SetRoutes()

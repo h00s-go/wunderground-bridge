@@ -8,10 +8,10 @@ import (
 
 	"github.com/gofiber/fiber/v2"
 	"github.com/gorilla/websocket"
+	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/api/services"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
-	"github.com/h00s-go/wunderground-bridge/station"
 )
 
 type API struct {
@@ -20,7 +20,7 @@ type API struct {
 	services *services.Services
 }
 
-func NewAPI(config *config.Config, logger *log.Logger, station *station.Station, wunderground *station.Wunderground, mqtt *mqtt.MQTT) *API {
+func NewAPI(config *config.Config, logger *log.Logger, station *models.Station, wunderground *models.Wunderground, mqtt *mqtt.MQTT) *API {
 	return &API{
 		config: config,
 		server: fiber.New(),

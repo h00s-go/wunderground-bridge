@@ -1,4 +1,4 @@
-package station
+package models
 
 import (
 	"encoding/json"
@@ -8,7 +8,6 @@ import (
 	"net/http"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/config"
 	"github.com/h00s-go/wunderground-bridge/mqtt"
 )
@@ -17,7 +16,7 @@ type Station struct {
 	config   *config.Station
 	logger   *log.Logger
 	Watchdog Watchdog
-	Weather  *models.Weather
+	Weather  *Weather
 }
 
 type Watchdog struct {
@@ -30,7 +29,7 @@ func NewStation(config *config.Station, logger *log.Logger) *Station {
 		config:   config,
 		logger:   logger,
 		Watchdog: Watchdog{},
-		Weather:  &models.Weather{},
+		Weather:  &Weather{},
 	}
 }
 
@@ -42,7 +41,7 @@ func (s *Station) UpdateWeather(ctx *fiber.Ctx) error {
 		return errors.New("Station password does not match")
 	}
 
-	w, err := models.NewWeather(ctx)
+	w, err := NewWeather(ctx)
 	s.UpdateWatchDog(err)
 	if err != nil {
 		return err

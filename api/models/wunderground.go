@@ -1,4 +1,4 @@
-package station
+package models
 
 import (
 	"fmt"
