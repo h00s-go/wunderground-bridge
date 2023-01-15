@@ -39,6 +39,7 @@ func NewAPI(config *config.Config, logger *log.Logger, station *models.Station, 
 }
 
 func (api *API) Start() {
+	api.setRoutes()
 	api.services.Logger.Println("Starting server on :8080")
 	go func() {
 		if err := api.server.Listen(":8080"); err != nil && err != http.ErrServerClosed {

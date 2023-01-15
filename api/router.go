@@ -7,7 +7,7 @@ import (
 	"github.com/h00s-go/wunderground-bridge/api/controllers"
 )
 
-func (api *API) SetRoutes() {
+func (api *API) setRoutes() {
 	wc := controllers.NewWeatherController(api.services)
 	sc := controllers.NewStationController(api.services)
 

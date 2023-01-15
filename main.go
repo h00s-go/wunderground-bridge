@@ -22,9 +22,8 @@ func main() {
 	logger := log.New(os.Stdout, "", log.Ldate|log.Ltime)
 	wunderground := models.NewWunderground(&config.Wunderground)
 	station := models.NewStation(&config.Station, logger)
-	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 
-	api.SetRoutes()
+	api := api.NewAPI(config, logger, station, wunderground, MQTT)
 	api.Start()
 	api.WaitForShutdown()
 }
