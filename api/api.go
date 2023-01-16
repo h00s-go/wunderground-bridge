@@ -7,7 +7,6 @@ import (
 	"os/signal"
 
 	"github.com/gofiber/fiber/v2"
-	"github.com/gorilla/websocket"
 	"github.com/h00s-go/wunderground-bridge/api/models"
 	"github.com/h00s-go/wunderground-bridge/api/services"
 	"github.com/h00s-go/wunderground-bridge/config"
@@ -24,17 +23,12 @@ func NewAPI(config *config.Config, logger *log.Logger, station *models.Station, 
 	return &API{
 		config: config,
 		server: fiber.New(),
-		services: &services.Services{
-			Logger:       logger,
-			Station:      station,
-			Wunderground: wunderground,
-			MQTT:         mqtt,
-			WebsocketUpgrader: &websocket.Upgrader{
-				CheckOrigin: func(r *http.Request) bool {
-					return true
-				},
-			},
-		},
+		services: services.NewServices(
+			logger,
+			station,
+			wunderground,
+			mqtt,
+		),
 	}
 }
 
