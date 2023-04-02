@@ -5,7 +5,7 @@ go 1.20
 require (
 	github.com/BurntSushi/toml v1.2.1
 	github.com/eclipse/paho.mqtt.golang v1.4.2
-	github.com/gofiber/fiber/v2 v2.42.0
+	github.com/gofiber/fiber/v2 v2.43.0
 	github.com/gorilla/websocket v1.5.0
 	github.com/shopspring/decimal v1.3.1
 )
