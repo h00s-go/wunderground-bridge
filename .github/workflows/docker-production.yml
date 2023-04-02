@@ -26,3 +26,9 @@ jobs:
           context: .
           push: true
           tags: ${{ vars.IMAGE_TAG }}:production
+      - 
+        name: Webhook Redeploy
+        uses: joelwmale/webhook-action@master
+        with:
+          url: ${{ secrets.WEBHOOK_URL }}
+          headers: '{"X-Hub-Signature": "${{ secrets.WEBHOOK_SECRET }}"}'
