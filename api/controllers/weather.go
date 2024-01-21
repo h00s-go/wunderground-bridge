@@ -23,10 +23,9 @@ func (wc *WeatherController) GetWeatherHandler(ctx *fiber.Ctx) error {
 	if err == nil {
 		ctx.Status(http.StatusOK)
 		return ctx.Send(weather)
-	} else {
-		ctx.Status(http.StatusInternalServerError)
-		return err
 	}
+	ctx.Status(http.StatusInternalServerError)
+	return err
 }
 
 func (wc *WeatherController) GetWeatherUpdateHandler(ctx *fiber.Ctx) error {

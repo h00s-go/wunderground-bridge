@@ -54,7 +54,7 @@ func NewMQTT(c *config.MQTT) *MQTT {
 func (m *MQTT) Publish(topic string, message string) {
 	go func() {
 		if m.client.IsConnected() {
-			if token := m.client.Publish(topic, 0, false, message); token.Wait() && token.Error() != nil {
+			if token := m.client.Publish(topic, 0, false, message); token.Error() != nil {
 				log.Println(token.Error())
 			}
 			log.Println("Published to MQTT topic: ", topic)

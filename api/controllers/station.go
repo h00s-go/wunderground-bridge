@@ -19,8 +19,10 @@ func NewStationController(services *services.Services) *StationController {
 
 func (sc *StationController) GetStationUpdateHandler(ctx *fiber.Ctx) error {
 	if err := sc.services.Station.UpdateWeather(ctx); err == nil {
-		go sc.services.Station.PublishWeatherToMQTT(sc.services.MQTT)
-		go sc.services.Wunderground.Update(string(ctx.Request().URI().QueryString()))
+		//go sc.services.Station.PublishWeatherToMQTT(sc.services.MQTT)
+		//go sc.services.Wunderground.Update(string(ctx.Request().URI().QueryString()))
+		sc.services.Station.PublishWeatherToMQTT(sc.services.MQTT)
+		sc.services.Wunderground.Update(string(ctx.Request().URI().QueryString()))
 	} else {
 		sc.services.Logger.Println("Error parsing weather: ", err, string(ctx.Request().URI().QueryString()))
 	}
