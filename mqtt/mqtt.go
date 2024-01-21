@@ -57,6 +57,7 @@ func (m *MQTT) Publish(topic string, message string) {
 			if token := m.client.Publish(topic, 0, false, message); token.Wait() && token.Error() != nil {
 				log.Println(token.Error())
 			}
+			log.Println("Published to MQTT topic: ", topic)
 		}
 	}()
 }
