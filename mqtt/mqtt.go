@@ -52,12 +52,14 @@ func NewMQTT(c *config.MQTT) *MQTT {
 }
 
 func (m *MQTT) Publish(topic string, message string) {
-	if m.client.IsConnected() {
-		if token := m.client.Publish(topic, 0, false, message); token.Error() != nil {
-			log.Println(token.Error())
+	go func() {
+		if m.client.IsConnected() {
+			if token := m.client.Publish(topic, 0, false, message); token.Wait() && token.Error() != nil {
+				log.Println(token.Error())
+			}
+			log.Println("Published to MQTT topic: ", topic)
 		}
-		log.Println("Published to MQTT topic: ", topic)
-	}
+	}()
 }
 
 func (m *MQTT) Close() {

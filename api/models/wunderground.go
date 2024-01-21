@@ -20,7 +20,10 @@ func NewWunderground(config *config.Wunderground) *Wunderground {
 func (w *Wunderground) Update(query string) error {
 	if w.Config.Enabled {
 		url := fmt.Sprintf("%v?%v", w.Config.UpdateURL, query)
-		_, err := http.Get(url)
+		response, err := http.Get(url)
+		if err != nil {
+			response.Body.Close()
+		}
 		return err
 	}
 	return nil
