@@ -2,6 +2,7 @@ package models
 
 import (
 	"fmt"
+	"io"
 	"net/http"
 
 	"github.com/h00s-go/wunderground-bridge/config"
@@ -22,8 +23,10 @@ func (w *Wunderground) Update(query string) error {
 		url := fmt.Sprintf("%v?%v", w.Config.UpdateURL, query)
 		response, err := http.Get(url)
 		if err != nil {
-			response.Body.Close()
+			return err
 		}
+		defer response.Body.Close()
+		_, err = io.ReadAll(response.Body)
 		return err
 	}
 	return nil
