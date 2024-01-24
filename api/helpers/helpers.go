@@ -1,9 +1,8 @@
 package helpers
 
 import (
+	"math"
 	"strconv"
-
-	"github.com/shopspring/decimal"
 )
 
 func StrToInt(s string) int {
@@ -22,26 +21,22 @@ func StrToFloat(s string) float64 {
 	return f
 }
 
-func StrToDecimal(s string) decimal.Decimal {
-	d, err := decimal.NewFromString(s)
-	if err != nil {
-		return decimal.Zero
-	}
-	return d.Round(2)
+func roundFloat(number float64) float64 {
+	return math.Round(number*100) / 100
 }
 
-func ConvertFahrenheitToCelsius(f float64) decimal.Decimal {
-	return decimal.NewFromFloat((f - 32) * 5 / 9).Round(2)
+func ConvertFahrenheitToCelsius(f float64) float64 {
+	return roundFloat((f - 32) * 5 / 9)
 }
 
-func ConvertMileToKilometer(mph float64) decimal.Decimal {
-	return decimal.NewFromFloat(mph * 1.609344).Round(2)
+func ConvertMileToKilometer(mph float64) float64 {
+	return roundFloat(mph * 1.609344)
 }
 
-func ConvertHGToKPA(hg float64) decimal.Decimal {
-	return decimal.NewFromFloat(hg * 33.8638866667).Round(2)
+func ConvertHGToKPA(hg float64) float64 {
+	return roundFloat(hg * 33.8638866667)
 }
 
-func ConvertInchToMillimeter(inch float64) decimal.Decimal {
-	return decimal.NewFromFloat(inch * 25.4).Round(2)
+func ConvertInchToMillimeter(inch float64) float64 {
+	return roundFloat(inch * 25.4)
 }

@@ -7,7 +7,6 @@ require (
 	github.com/eclipse/paho.mqtt.golang v1.4.3
 	github.com/gofiber/fiber/v2 v2.52.0
 	github.com/gorilla/websocket v1.5.1
-	github.com/shopspring/decimal v1.3.1
 )
 
 require (
