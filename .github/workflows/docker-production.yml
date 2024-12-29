@@ -26,9 +26,4 @@ jobs:
           context: .
           push: true
           tags: ${{ vars.IMAGE_TAG }}:production
-      -
-        name: Webhook Redeploy
-        uses: distributhor/workflow-webhook@v3
-        env:
-          webhook_url: ${{ secrets.WEBHOOK_URL }}
-          webhook_secret: ${{ secrets.WEBHOOK_SECRET }}
+
