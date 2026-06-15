@@ -1,10 +1,17 @@
-FROM golang:1.25-alpine AS build
+FROM --platform=$BUILDPLATFORM golang:1.25-alpine AS build
+
+ARG TARGETOS
+
+ARG TARGETARCH
+
+ARG TARGETVARIANT
 
 WORKDIR /src
 
 COPY . ./
 
 RUN go mod download && \
+    GOOS=$TARGETOS GOARCH=$TARGETARCH GOARM=${TARGETVARIANT#v} \
     go build -o /out/wunderground-bridge
 
 FROM alpine
